@@ -19,6 +19,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(lubridate)
+library(kableExtra)
 ```
 
 ## Read in data
@@ -36,6 +37,7 @@ ggplot(data = urchins,
   geom_histogram(bins = 10, 
                  aes(fill = common_name)) +
   theme_minimal() +
+  scale_fill_manual(values = c("mediumpurple1", "indianred1")) + #scale_fill_manual() allows me to assign specific colors to each facet based on the vector
   facet_wrap(~ common_name) +
   labs(title = "Distribution of Purple and Red Urchin Sizes",
        key = "Common Name",
@@ -45,5 +47,27 @@ ggplot(data = urchins,
        fill = "Common Name") + # "fill" edits the caption name
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         plot.caption = element_text(hjust = 0.05))
+```
+
+2. Descriptive Statistics Table: Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
+
+```{r}
+urchin_summary <- urchins %>% 
+  group_by(common_name) %>% 
+  summarize(mean_size = mean(size, na.rm = TRUE),
+            median_size = median(size, na.rm = TRUE),
+            sd_size = sd(size, na.rm = TRUE),
+            sample_size = n())
+
+# Create a table to present the data using kableExtra()
+urchin_summary %>% 
+  kable(digits = c(2, 2, 2, 2),
+        col.names = c("Common Name",
+                      "Mean Size (cm)",
+                      "Median Size (cm)",
+                      "Standard Deviation (cm)",
+                      "Sample Size"),
+        caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>% 
+  kable_styling(full_width = FALSE) 
 ```
 
