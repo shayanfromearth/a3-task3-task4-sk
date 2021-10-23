@@ -34,7 +34,7 @@ urchins <- read_csv(here("data", "urchins.csv")) %>%
 ```{r}
 ggplot(data = urchins, 
          aes(x = size)) + 
-  geom_histogram(bins = 10, 
+  geom_histogram(bins = 12, 
                  aes(fill = common_name)) +
   theme_minimal() +
   scale_fill_manual(values = c("mediumpurple1", "indianred1")) + #scale_fill_manual() allows me to assign specific colors to each facet based on the vector
@@ -67,7 +67,7 @@ urchin_summary %>%
                       "Median Size (cm)",
                       "Standard Deviation (cm)",
                       "Sample Size"),
-        caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>% 
+        caption = "<center><bold>Table 1. Summary of Statistics of Purple and Red Urchins<center><bold>") %>% 
   kable_styling(full_width = FALSE) 
 ```
 
