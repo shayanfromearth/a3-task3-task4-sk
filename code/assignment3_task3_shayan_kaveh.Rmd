@@ -1,0 +1,49 @@
+---
+title: "a3_task3_shayan_kaveh"
+author: "Shayan Kaveh"
+date: "10/23/2021"
+output: html_document
+---
+
+## Overview
+
+This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers.
+
+**Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
+
+## Set Up
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(lubridate)
+```
+
+## Read in data
+```{r}
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+## Section 1
+1. Data visualization: compare the distribution of sizes of purple and red urchins with a histogram
+
+```{r}
+ggplot(data = urchins, 
+         aes(x = size)) + 
+  geom_histogram(bins = 10, 
+                 aes(fill = common_name)) +
+  theme_minimal() +
+  facet_wrap(~ common_name) +
+  labs(title = "Distribution of Purple and Red Urchin Sizes",
+       key = "Common Name",
+       x = "Size (cm)",
+       y = "Count",
+       caption = "Fig 1. Distribution of urchin sizes based on color from Santa Barbara Coastal Long Term Ecological Research",
+       fill = "Common Name") + # "fill" edits the caption name
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        plot.caption = element_text(hjust = 0.05))
+```
+
