@@ -12,6 +12,7 @@ This code explores data on red and purple sea urchins recorded by Santa Barbara 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
 
 ## Set Up
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
@@ -23,13 +24,15 @@ library(kableExtra)
 ```
 
 ## Read in data
+
 ```{r}
 urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names()
 ```
 
 ## Section 1
-1. Data visualization: compare the distribution of sizes of purple and red urchins with a histogram
+
+1.  Data visualization: compare the distribution of sizes of purple and red urchins with a histogram
 
 ```{r}
 ggplot(data = urchins, 
@@ -49,7 +52,7 @@ ggplot(data = urchins,
         plot.caption = element_text(hjust = 0.05))
 ```
 
-2. Descriptive Statistics Table: Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
+2.  Descriptive Statistics Table: Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
 
 ```{r}
 urchin_summary <- urchins %>% 
@@ -67,7 +70,7 @@ urchin_summary %>%
                       "Median Size (cm)",
                       "Standard Deviation (cm)",
                       "Sample Size"),
-        caption = "<center><bold>Table 1. Summary of Statistics of Purple and Red Urchins<center><bold>") %>% 
+        caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>% 
   kable_styling(full_width = FALSE) 
 ```
-
+With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or about 33%. 
