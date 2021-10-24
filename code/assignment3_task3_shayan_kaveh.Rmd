@@ -105,6 +105,17 @@ ggplot(data = purple_count,
        aes(x = year, y = count)) +
   geom_col(aes(fill = site_full)) +
   facet_wrap(~ site_full) +
-  theme_minimal()
+  theme_minimal() +
+  labs(fill = "Site",
+       x = "Year",
+       y = "Count",
+       title = "Purple Urchin Counts from 2008 - 2020",
+       caption = "Fig 2. Purple urchin counts at each observation site froom 2008 to 2020 based on Santa Barbara \n Coastal Long Term Ecological Research") +
+   theme(plot.title = element_text(hjust = 0.5, size = 15),
+        plot.caption = element_text(hjust = 0.0999),
+        legend.title = element_text(size = 7, hjust = 0.5), 
+        legend.text = element_text(size = 7),
+        legend.key.height = unit(0.4, 'cm'),
+        legend.key.width = unit(0.4, 'cm'))
 ```
 
