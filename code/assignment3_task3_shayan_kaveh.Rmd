@@ -74,3 +74,37 @@ urchin_summary %>%
   kable_styling(full_width = FALSE) 
 ```
 With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or about 33%. 
+
+## Section 2
+Explore purple urchin counts by site & year
+
+```{r}
+# Create a subset for purple urchins, create a column to show the site year, and write out the full names of the sites
+
+purple_urchins <- urchins %>% 
+  filter(common_name == "Purple Urchin") %>% # filter to only include purple urchins
+  mutate(mdy = mdy(date)) %>% # create a date class column
+  mutate(year = year(mdy)) %>% # create a column with just the year
+  mutate(site_full = case_when(
+    site == "NAPL" ~ "Naples Reef",
+    site == "AQUE" ~ "Arroyo Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef",
+    site == "IVEE" ~ "Isla Vista Reef"
+  )) 
+
+# create a table to see the count of purple urchins in each site per year
+purple_count <- purple_urchins %>% 
+  group_by(site_full, year) %>% 
+  summarize(count = n())
+```
+
+Now let's make a graph to visualize the urchin count at each site over the years
+```{r}
+ggplot(data = purple_count,
+       aes(x = year, y = count)) +
+  geom_col(aes(fill = site_full)) +
+  facet_wrap(~ site_full) +
+  theme_minimal()
+```
+
