@@ -118,4 +118,4 @@ ggplot(data = purple_count,
         legend.key.height = unit(0.4, 'cm'),
         legend.key.width = unit(0.4, 'cm'))
 ```
-
+Considering these sample populations were recorded at long-term kelp removal experiment sites, this data may not accurately represent the overall purple urchin population. Although there is a trend that populations were largest at the start of the data collection, we need to know how the habitat changed and whether these sample population habitats accurately represent the overall Santa Barbara coast. The large drop in counts during 2020 could also be a result of changes to sample collection due to the COVID-19 pandemic. What can be inferred from this data, however, is that the kelp removal experiment did lead to smaller purple urchin populations. 
