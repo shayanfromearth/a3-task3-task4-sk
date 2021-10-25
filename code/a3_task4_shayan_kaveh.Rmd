@@ -1,0 +1,68 @@
+---
+title: "a3_task4_shayan_kaveh"
+author: "Shayan Kaveh"
+date: "10/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(here)
+library(kableExtra)
+```
+
+## Overview
+
+This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers.
+
+**Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
+
+## Read in data
+
+```{r}
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+read in the urchins data and write code to compare the mean size of purple urchins in CONTROL (no giant kelp removal) or ANNUAL (annual kelp removal) sections of Naples Reef in 2010. You should write nicely annotated code, with clear sections and text as useful, to: 
+
+Wrangle the urchins data to only include Naples Reef observations for purple urchins observed in 2010. Hint: convert date to "Date" class with lubridate, then use the `year()` functions to add a new columns for year that you can use as variable for filtering. 
+Look at and consider exploratory faceted histograms and QQ-plots for the size distribution of purple urchins at Naples in 2010, separated by treatment (Control and Annual), to assess normality. These are exploratory and do not need to be finalized and you do not need to add figure captions, but these should appear in your knitted document. Below the graphs add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
+Create a finalized basic summary table (with table caption above) of descriptive statistics for both groups (including at least the mean, standard deviation, and sample size by treatment). 
+
+## Insert data and clean it for purple urchin from the Naples Reef in 2010
+```{r}
+purple_urchins_naples_2010 <- urchins %>% 
+  clean_names() %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  filter(site == "NAPL") %>% 
+  mutate(mdy = mdy(date)) %>% 
+  mutate(year = year(mdy)) %>% 
+  filter(year == 2010)
+```
+
+## Now let's compare the control and annual date for this new dataset with a histogram
+```{r}
+purple_urchins_means <- purple_urchins_naples_2010 %>% 
+  group_by(treatment) %>% 
+  summarize(mean_size = mean(size, na.rm = TRUE))
+
+ggplot(data = purple_urchins_means,
+       aes(x = treatment, y = mean_size)) +
+  geom_col(aes(fill = treatment), width = 0.25) + 
+  theme_minimal() +
+  labs(x = "Treatment",
+       y = "Mean Size (cm)",
+       title = "Mean Size of Purple Urchin at Annual & Control Sites at Naples Reef in 2010") +
+  theme(legend.position = "none")
+```
+
+## Now do the same with a QQ-plot
+```{r}
+ggplot(data = purple_urchins_naples_2010) +
+  geom_qq(aes(sample = size, color = treatment)) +
+  theme_minimal() +
+  facet_wrap(~ treatment)
