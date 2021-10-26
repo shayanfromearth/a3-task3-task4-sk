@@ -108,7 +108,7 @@ ggplot(data = purple_count,
   theme_minimal() +
   labs(fill = "Site",
        x = "Year",
-       y = "Count",
+       y = "Total Number of Purple Urchins",
        title = "Purple Urchin Counts from 2008 - 2020",
        caption = "Fig 2. Purple urchin counts at each observation site froom 2008 to 2020 based on Santa Barbara \n Coastal Long Term Ecological Research") +
    theme(plot.title = element_text(hjust = 0.5, size = 15), 

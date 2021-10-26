@@ -60,9 +60,42 @@ ggplot(data = purple_urchins_means,
   theme(legend.position = "none")
 ```
 
+## Now let's compare the control and annual date for this new dataset with a histogram
+```{r}
+ggplot(data = purple_urchins_naples_2010,
+       aes(x = size)) +
+  geom_histogram(aes(fill = treatment)) + 
+  facet_wrap(~ treatment) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
 ## Now do the same with a QQ-plot
 ```{r}
 ggplot(data = purple_urchins_naples_2010) +
   geom_qq(aes(sample = size, color = treatment)) +
   theme_minimal() +
   facet_wrap(~ treatment)
+```
+
+## Now make a table to summarize and compare the data
+```{r}
+purple_urchins_naples_2010_summary <- purple_urchins_naples_2010 %>% 
+  group_by(treatment) %>% 
+  summarize(mean_size = mean(size, na.rm = TRUE),
+            median_size = median(size, na.rm = TRUE),
+            sd_size = sd(size, na.rm = TRUE),
+            sample_size = n())
+
+# Create a table to present the data using kableExtra()
+purple_urchins_naples_2010_summary %>% 
+  kable(digits = c(2, 2, 2, 2),
+        col.names = c("Common Name",
+                      "Mean Size (cm)",
+                      "Median Size (cm)",
+                      "Standard Deviation (cm)",
+                      "Sample Size"),
+        caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>% 
+  kable_styling(full_width = FALSE) 
+```
+
