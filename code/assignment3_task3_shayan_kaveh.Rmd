@@ -74,7 +74,7 @@ urchin_summary %>%
      kable_styling(bootstrap_options = "striped", full_width = F, position = "center") # bootstrap will make the table look all nice with different colors, I like it
  
 ```
-With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or about 33%. 
+With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or a percent difference of 41%. 
 
 ## Section 2
 Explore purple urchin counts by site & year
