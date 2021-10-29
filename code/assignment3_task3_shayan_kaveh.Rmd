@@ -1,5 +1,5 @@
 ---
-title: "a3_task3_shayan_kaveh"
+title: "Assignment 3 Task 3 (Shayan Kaveh)"
 author: "Shayan Kaveh"
 date: "10/23/2021"
 output: html_document
@@ -7,14 +7,14 @@ output: html_document
 
 ## Overview
 
-This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers. The research was part of a giant kelp removal project that examines how urchin population and sizes are affected by the removals. This code looks at the distribution and size of red and purple urchins at 5 sites from 2008 to 2020, which we narrow down to look at the change of purple urchin population. 
+This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers. The research was part of a giant kelp removal project that examines how urchin population and sizes are affected by the removals. This code looks at the distribution and size of red and purple urchins at 5 sites from 2008 to 2020, which we narrow down to look at the change of purple urchin population.
 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
 
 ## Set Up
 
-```{r setup, include= TRUE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```{r setup, include= TRUE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align = 'center', out.extra = 'angle=90') # added fig.align = 'center', out.extra = 'angle=90' to make figures centered in knitted html
 
 library(tidyverse)
 library(here)
@@ -33,7 +33,7 @@ urchins <- read_csv(here("data", "urchins.csv")) %>%
 
 ## Section 1
 
-1.  Data visualization: compare the distribution of sizes of purple and red urchins with a histogram
+**1. Data visualization:** compare the distribution of sizes of purple and red urchins with a histogram
 
 ```{r}
 # create a histogram in ggplot2 to compare sizes of purple and red urchins in all of the data
@@ -56,7 +56,7 @@ ggplot(data = urchins,
         legend.position = "none")
 ```
 
-2.  Descriptive Statistics Table: Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
+**2. Descriptive Statistics Table:** Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
 
 ```{r}
 urchin_summary <- urchins %>% 
@@ -78,9 +78,11 @@ urchin_summary %>%
      kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "center") # bootstrap will make the table look all nice with different colors, I like it
  
 ```
-With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or a percent difference of 41%. 
+
+With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or a percent difference of 41%.
 
 ## Section 2
+
 Explore purple urchin counts by site & year
 
 ```{r}
@@ -105,6 +107,7 @@ purple_count <- purple_urchins %>%
 ```
 
 Now let's make a graph to visualize the urchin count at each site over the years
+
 ```{r}
 ggplot(data = purple_count,
        aes(x = year, y = count)) +
@@ -126,4 +129,4 @@ ggplot(data = purple_count,
         )
 ```
 
-Considering these sample populations were recorded at long-term kelp removal experiment sites, this data may not accurately represent the overall purple urchin population. Although there is a trend that populations were largest at the start of the data collection, we need to know how the habitat changed and whether these sample population habitats accurately represent the overall Santa Barbara coast. The large drop in counts during 2020 could also be a result of changes to sample collection due to the COVID-19 pandemic. It's also important to note that this data combines results from control and experimental sites, so there is no way to differentiate the overall trend from what might be experimental results. 
+Considering these sample populations were recorded at long-term kelp removal experiment sites, this data may not accurately represent the overall purple urchin population. Although there is a trend that populations were largest at the start of the data collection, we need to know how the habitat changed and whether these sample population habitats accurately represent the overall Santa Barbara coast. The large drop in counts during 2020 could also be a result of changes to sample collection due to the COVID-19 pandemic. It's also important to note that this data combines results from control and experimental sites, so there is no way to differentiate the overall trend from what might be experimental results.

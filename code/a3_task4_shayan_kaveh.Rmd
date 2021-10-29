@@ -1,12 +1,12 @@
 ---
-title: "a3_task4_shayan_kaveh"
+title: "Assignment 3 Task 4 (Shayan Kaveh)"
 author: "Shayan Kaveh"
 date: "10/24/2021"
 output: html_document
 ---
 ## Set Up
 ```{r setup, include= TRUE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = 'center', out.extra = 'angle=90')
 library(tidyverse)
 library(lubridate) # create date classes
 library(janitor)
@@ -74,7 +74,10 @@ ggplot(data = purple_urchins_naples_2010, aes(sample = size)) +
   # geom_qq() doesn't use an "x" variable, instead it uses "sample" because those are the values that will be compared to the normal data
   stat_qq_line() +
   theme_minimal() +
-  facet_wrap(~ treatment_type)
+  facet_wrap(~ treatment_type) +
+  theme(legend.position = 'none') +
+  labs(x = "Theoretical Quantiles",
+       y = "Size (cm)")
 ```
 
 These two exploratory graphs suggest that the distribution of purple urchin sizes in control and experimental sites are farily normally distributed, according to the qq-plot's fairly linear trend. The control sites seem to have a slightly more normal distribution whereas experimental sites have a very strong trend for sizes around 3 cm. 
