@@ -8,80 +8,79 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
-library(lubridate)
+library(lubridate) # create date classes
 library(janitor)
 library(here)
-library(kableExtra)
+library(kableExtra) # make kable table
 ```
 
 ## Overview
 
-This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers.
+This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers. I wrangle the data to compare the mean sizes of purple urchins at the Naples Reef in 2010 between sites where giant kelp was removed and control sites. 
 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
 
 ## Read in data
 
 ```{r}
+# read in urchins data and clean to lowersnake case
 urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names()
 ```
 
-read in the urchins data and write code to compare the mean size of purple urchins in CONTROL (no giant kelp removal) or ANNUAL (annual kelp removal) sections of Naples Reef in 2010. You should write nicely annotated code, with clear sections and text as useful, to: 
+## Compare the difference in mean size of purple urchins at the Naples Reef in the control and annual sites
 
-Wrangle the urchins data to only include Naples Reef observations for purple urchins observed in 2010. Hint: convert date to "Date" class with lubridate, then use the `year()` functions to add a new columns for year that you can use as variable for filtering. 
-Look at and consider exploratory faceted histograms and QQ-plots for the size distribution of purple urchins at Naples in 2010, separated by treatment (Control and Annual), to assess normality. These are exploratory and do not need to be finalized and you do not need to add figure captions, but these should appear in your knitted document. Below the graphs add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
-Create a finalized basic summary table (with table caption above) of descriptive statistics for both groups (including at least the mean, standard deviation, and sample size by treatment). 
+1. Wrangle the urchins data to only include Naples Reef observations for purple urchins observed in 2010. 
+2. Use an exploratory faceted histograms and QQ-plot for the size distribution of purple urchins at Naples in 2010, separated by treatment (Control and Annual), to assess normality. 
+3. Create a finalized basic summary table (with table caption above) of descriptive statistics for both groups. 
 
 ## Insert data and clean it for purple urchin from the Naples Reef in 2010
 ```{r}
-purple_urchins_naples_2010 <- urchins %>% 
+purple_urchins_naples_2010 <- urchins %>% # create a new data class for NAPL in 2010
   clean_names() %>% 
-  filter(common_name == "Purple Urchin") %>% 
-  filter(site == "NAPL") %>% 
-  mutate(mdy = mdy(date)) %>% 
+  filter(common_name == "Purple Urchin") %>% # filter for Purple Urchin species only
+  filter(site == "NAPL") %>% # filter for Naples Reef only
+  mutate(mdy = mdy(date)) %>% # mdy() will convert the dates to a date class
   mutate(year = year(mdy)) %>% 
-  filter(year == 2010)
+  filter(year == 2010) %>% # filter only show data for 2010 
+  mutate(treatment_type = case_when(
+    treatment == "ANNUAL" ~ "Experimental", # renaming annual as experimental so it's label is more intuitive
+  treatment == "CONTROL" ~ "Control"))
 ```
 
-## Now let's compare the control and annual date for this new dataset with a histogram
-```{r}
-purple_urchins_means <- purple_urchins_naples_2010 %>% 
-  group_by(treatment) %>% 
-  summarize(mean_size = mean(size, na.rm = TRUE))
+## Let's compare the control and annual data for this dataset with a histogram
 
-ggplot(data = purple_urchins_means,
-       aes(x = treatment, y = mean_size)) +
-  geom_col(aes(fill = treatment), width = 0.25) + 
-  theme_minimal() +
-  labs(x = "Treatment",
-       y = "Mean Size (cm)",
-       title = "Mean Size of Purple Urchin at Annual & Control Sites at Naples Reef in 2010") +
-  theme(legend.position = "none")
-```
-
-## Now let's compare the control and annual date for this new dataset with a histogram
 ```{r}
+# use ggplot to create an exploratory histogram that compares purple urchin size in the 2 observation types
 ggplot(data = purple_urchins_naples_2010,
-       aes(x = size)) +
-  geom_histogram(aes(fill = treatment)) + 
-  facet_wrap(~ treatment) +
+       aes(x = size)) + 
+  geom_histogram(aes(fill = treatment_type), bins = 10) + 
+  facet_wrap(~ treatment_type) +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") + # I don't feel like there's a need for a legend in this graph because it already has a label 
+  labs(title = "Distribution of purple urchin sizes in annual and control sites",
+       caption = "Fig 1. Observations of purple urchin sizes at Naples Reef 2010 annual and control sites",
+       x = "Size (cm)",
+       y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
-## Now do the same with a QQ-plot
+## Now let's assess how normally distributed this data is with a qq-plot
 ```{r}
+# qqplot will compare the values in the distributions to a theoretical normally distributed dataset to assess normality
 ggplot(data = purple_urchins_naples_2010) +
-  geom_qq(aes(sample = size, color = treatment)) +
+  geom_qq(aes(sample = size, color = treatment_type)) + 
+  # geom_qq() doesn't use an "x" variable, instead it uses "sample" because those are the values that will be compared to the normal data
   theme_minimal() +
-  facet_wrap(~ treatment)
+  facet_wrap(~ treatment_type)
 ```
+
+These two exploratory graphs suggest that the distribution of purple urchin sizes in control and experimental sites are normally distributed, according to the qq-plot's fairly linear trend. The control sites seem to have a slightly more normal distribution whereas experimental sites have a very strong trend for sizes around 3 cm. 
 
 ## Now make a table to summarize and compare the data
 ```{r}
 purple_urchins_naples_2010_summary <- purple_urchins_naples_2010 %>% 
-  group_by(treatment) %>% 
+  group_by(treatment_type) %>% 
   summarize(mean_size = mean(size, na.rm = TRUE),
             median_size = median(size, na.rm = TRUE),
             sd_size = sd(size, na.rm = TRUE),
@@ -95,7 +94,6 @@ purple_urchins_naples_2010_summary %>%
                       "Median Size (cm)",
                       "Standard Deviation (cm)",
                       "Sample Size"),
-        caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>% 
-  kable_styling(full_width = FALSE) 
+        caption = "<center>Table 1. Summary of Statistics of Purple Urchin Size Distribution at Naples Reef in 2010<center>") %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) # I just like how this bootstrap looks... 
 ```
-

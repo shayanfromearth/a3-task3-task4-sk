@@ -7,13 +7,13 @@ output: html_document
 
 ## Overview
 
-This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers. It looks at the distribution of red and purple urchins at 5 sites from 2008 to 2020, which we narrow down to look at the change of purple urchin population. 
+This code explores data on red and purple sea urchins recorded by Santa Barbara Coastal Long Term Ecological Research program divers. The research was part of a giant kelp removal project that examines how urchin population and sizes are affected by the removals. This code looks at the distribution and size of red and purple urchins at 5 sites from 2008 to 2020, which we narrow down to look at the change of purple urchin population. 
 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. <https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b>.
 
 ## Set Up
 
-```{r setup, include=FALSE}
+```{r setup, include= TRUE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
@@ -21,13 +21,14 @@ library(here)
 library(janitor)
 library(lubridate) # this allows us to create a date class
 library(kableExtra) # use this to make pretty tables
+library(RColorBrewer) # installed this color palette set to have nice graph color sets more easily!
 ```
 
 ## Read in data
 
 ```{r}
 urchins <- read_csv(here("data", "urchins.csv")) %>% 
-  clean_names() # clean the names 
+  clean_names() # make it lowersnake case 
 ```
 
 ## Section 1
@@ -35,12 +36,14 @@ urchins <- read_csv(here("data", "urchins.csv")) %>%
 1.  Data visualization: compare the distribution of sizes of purple and red urchins with a histogram
 
 ```{r}
+# create a histogram in ggplot2 to compare sizes of purple and red urchins in all of the data
 ggplot(data = urchins, 
          aes(x = size)) + # histogram only uses x variable~
   geom_histogram(bins = 12, # bins auto sets to 30, so made it smaller to show the trend better
-                 aes(fill = common_name)) + 
-  theme_minimal() +
+                 aes(fill = common_name, color = common_name)) + 
+  theme_gray() +
   scale_fill_manual(values = c("mediumpurple1", "indianred1")) + # scale_fill_manual() allows me to assign specific colors to each facet based on the vector
+  scale_color_manual(values = c("white","white")) +
   facet_wrap(~ common_name) + # facet wrapping by common name to show the differences between the two urchin species
   labs(title = "Distribution of Purple and Red Urchin Sizes",
        key = "Common Name",
@@ -49,7 +52,8 @@ ggplot(data = urchins,
        caption = "Fig 1. Distribution of urchin sizes based on color from Santa Barbara Coastal Long Term Ecological Research",
        fill = "Common Name") + # "fill" edits the caption name
   theme(plot.title = element_text(hjust = 0.5, size = 15), # hjust allows the title to be centered
-        plot.caption = element_text(hjust = 0.05))
+        plot.caption = element_text(hjust = 0.05),
+        legend.position = "none")
 ```
 
 2.  Descriptive Statistics Table: Create a finalized summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table
@@ -71,7 +75,7 @@ urchin_summary %>%
                       "Standard Deviation (cm)",
                       "Sample Size"),
         caption = "<center>Table 1. Summary of Statistics of Purple and Red Urchins<center>") %>%  # <center> will center the text 
-     kable_styling(bootstrap_options = "striped", full_width = F, position = "center") # bootstrap will make the table look all nice with different colors, I like it
+     kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "center") # bootstrap will make the table look all nice with different colors, I like it
  
 ```
 With far over 30 samples, the data does adhere to the central limit theorem; although the purple urchin distribution is slightly right-skewed. As can be seen by the smaller standard deviation and difference in mean and median, the purple urchin data has more concentrated count with less spread. It is observed that red urchin on average are larger than purple by 2.3 cm or a percent difference of 41%. 
@@ -104,18 +108,22 @@ Now let's make a graph to visualize the urchin count at each site over the years
 ```{r}
 ggplot(data = purple_count,
        aes(x = year, y = count)) +
-  geom_col(aes(fill = site_full)) + # chose to use a column graph because it shows the trend in a very visible, discrete way
+  geom_col(aes(fill = site_full, color = site_full)) + # chose to use a column graph because it shows the trend in a very visible, discrete way
   facet_wrap(~ site_full) +
-  theme_minimal() +
+  # if I wanted to show the axes on each faceted graph, I could add facet_wrap(scales = 'free_x') and the x-axis would appear on each graph
+  theme_gray() +
+  scale_color_manual(values = c("white", "white", "white", "white", "white")) +
+  scale_fill_brewer(palette = "Set2") +
+  # installed the brewer package to use the pre-created palettes they have~
   labs(fill = "Site",
        x = "Year",
        y = "Total Number of Purple Urchins",
        title = "Purple Urchin Counts from 2008 - 2020",
-       caption = "Fig 2. Purple urchin counts at each observation site froom 2008 to 2020 based on Santa Barbara Coastal Long \n Term Ecological Research") +
+       caption = "Fig 2. Purple urchin counts at each observation site from 2008 to 2020 based on \n Santa Barbara Coastal Long Term Ecological Research") +
    theme(plot.title = element_text(hjust = 0.5, size = 15),  
-        plot.caption = element_text(hjust = 0.1),
+        plot.caption = element_text(hjust = 1),
         legend.position = "none" # removed the legend because the graph already shows the title of the reefs already
         )
 ```
 
-Considering these sample populations were recorded at long-term kelp removal experiment sites, this data may not accurately represent the overall purple urchin population. Although there is a trend that populations were largest at the start of the data collection, we need to know how the habitat changed and whether these sample population habitats accurately represent the overall Santa Barbara coast. The large drop in counts during 2020 could also be a result of changes to sample collection due to the COVID-19 pandemic. What can be inferred from this data, however, is that the kelp removal experiment did lead to smaller purple urchin populations. 
+Considering these sample populations were recorded at long-term kelp removal experiment sites, this data may not accurately represent the overall purple urchin population. Although there is a trend that populations were largest at the start of the data collection, we need to know how the habitat changed and whether these sample population habitats accurately represent the overall Santa Barbara coast. The large drop in counts during 2020 could also be a result of changes to sample collection due to the COVID-19 pandemic. It's also important to note that this data combines results from control and experimental sites, so there is no way to differentiate the overall trend from what might be experimental results. 
