@@ -4,8 +4,8 @@ author: "Shayan Kaveh"
 date: "10/24/2021"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
+## Set Up
+```{r setup, include= TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(lubridate) # create date classes
@@ -54,9 +54,10 @@ purple_urchins_naples_2010 <- urchins %>% # create a new data class for NAPL in 
 # use ggplot to create an exploratory histogram that compares purple urchin size in the 2 observation types
 ggplot(data = purple_urchins_naples_2010,
        aes(x = size)) + 
-  geom_histogram(aes(fill = treatment_type), bins = 10) + 
+  geom_histogram(aes(fill = treatment_type, color = treatment_type), bins = 10) + 
   facet_wrap(~ treatment_type) +
   theme_minimal() +
+  scale_color_manual(values = c("white", "white")) +
   theme(legend.position = "none") + # I don't feel like there's a need for a legend in this graph because it already has a label 
   labs(title = "Distribution of purple urchin sizes in annual and control sites",
        caption = "Fig 1. Observations of purple urchin sizes at Naples Reef 2010 annual and control sites",
@@ -68,14 +69,15 @@ ggplot(data = purple_urchins_naples_2010,
 ## Now let's assess how normally distributed this data is with a qq-plot
 ```{r}
 # qqplot will compare the values in the distributions to a theoretical normally distributed dataset to assess normality
-ggplot(data = purple_urchins_naples_2010) +
+ggplot(data = purple_urchins_naples_2010, aes(sample = size)) +
   geom_qq(aes(sample = size, color = treatment_type)) + 
   # geom_qq() doesn't use an "x" variable, instead it uses "sample" because those are the values that will be compared to the normal data
+  stat_qq_line() +
   theme_minimal() +
   facet_wrap(~ treatment_type)
 ```
 
-These two exploratory graphs suggest that the distribution of purple urchin sizes in control and experimental sites are normally distributed, according to the qq-plot's fairly linear trend. The control sites seem to have a slightly more normal distribution whereas experimental sites have a very strong trend for sizes around 3 cm. 
+These two exploratory graphs suggest that the distribution of purple urchin sizes in control and experimental sites are farily normally distributed, according to the qq-plot's fairly linear trend. The control sites seem to have a slightly more normal distribution whereas experimental sites have a very strong trend for sizes around 3 cm. 
 
 ## Now make a table to summarize and compare the data
 ```{r}
